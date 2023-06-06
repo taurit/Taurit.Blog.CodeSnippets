@@ -16,7 +16,7 @@ public partial class MyBenchmark
     public string NewImplementation() => NewImplementation(SampleInput);
 
     // OLD IMPLEMENTATION
-    private static readonly Regex MultipleWhitespacesRegex = new(@"\s+");
+    private static readonly Regex MultipleWhitespacesRegex = new(@"\s+", RegexOptions.Compiled);
     private string OldImplementation(string input) => MultipleWhitespacesRegex.Replace(input, " ");
 
     // NEW IMPLEMENTATION
