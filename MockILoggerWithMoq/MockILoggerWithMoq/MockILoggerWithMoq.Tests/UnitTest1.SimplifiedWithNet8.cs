@@ -5,7 +5,7 @@ namespace MockILoggerWithMoq.Tests;
 
 
 [TestClass]
-public class Tests // Assuming NUnit is used for unit testing
+public class Tests
 {
     [TestMethod]
     public void When_ObjectIsConstructed_Expect_NoErrorsLogged()
