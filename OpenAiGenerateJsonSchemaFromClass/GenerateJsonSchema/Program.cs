@@ -3,11 +3,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using OpenAI;
-using OpenAI.Managers;
-using OpenAI.ObjectModels;
-using OpenAI.ObjectModels.RequestModels;
+using OpenAI.Chat;
 using Spectre.Console;
 using Spectre.Console.Json;
+using System.ClientModel;
 
 namespace GenerateJsonSchema;
 
@@ -23,44 +22,33 @@ internal class Program
         schema.AllowAdditionalProperties = false; // required by OpenAI
 
         var schemaAsString = schema.ToString();
+        AnsiConsole.MarkupLine("[yellow on blue1]Schema:[/]");
         AnsiConsole.Write(new JsonText(schemaAsString));
+        AnsiConsole.WriteLine();
 
         // Send query to OpenAI
         var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var openAiDeveloperKey = config["OpenAiDeveloperKey"]!;
         var openAiOrganizationId = config["OpenAiOrganization"]!;
 
-        var openAiService = new OpenAIService(new OpenAiOptions()
-        {
-            ApiKey = openAiDeveloperKey,
-            Organization = openAiOrganizationId,
-            DefaultModelId = "gpt-4o-2024-08-06"
-        });
+        var openAiClientOptions = new OpenAIClientOptions { OrganizationId = openAiOrganizationId };
+        ChatClient client = new(model: "gpt-4o-2024-08-06", new ApiKeyCredential(openAiDeveloperKey), openAiClientOptions);
 
-        var completionResult = await openAiService.ChatCompletion.CreateCompletion(new ChatCompletionCreateRequest
+        var options = new ChatCompletionOptions
         {
-            Messages = new List<ChatMessage>
-            {
-                ChatMessage.FromSystem("You are a helpful assistant."),
-                ChatMessage.FromUser("Provide information about Poland"),
-            },
-            ResponseFormat = new ResponseFormat()
-            {
-                Type = StaticValues.CompletionStatics.ResponseFormat.JsonSchema,
-                JsonSchema = schema
-            }
-        });
+            ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat("countries_schema", new BinaryData(schemaAsString), null, true)
 
-        if (completionResult.Successful)
-        {
-            var responseText = completionResult.Choices.First().Message.Content;
-            AnsiConsole.Write(new JsonText(responseText));
-        }
-        else
-        {
-            AnsiConsole.MarkupLine($"[red]Error:[/] {completionResult.Error?.Message}");
-        }
+        };
+        List<ChatMessage> messages =
+        [
+            new SystemChatMessage("You are a helpful assistant."),
+            new UserChatMessage("Provide information about Poland")
+        ];
 
+        ChatCompletion completion = await client.CompleteChatAsync(messages, options);
+        var responseToPrompt = completion.Content[0].Text;
 
+        AnsiConsole.MarkupLine("[yellow on blue1]ChatGPT response:[/]");
+        AnsiConsole.Write(new JsonText(responseToPrompt));
     }
 }
