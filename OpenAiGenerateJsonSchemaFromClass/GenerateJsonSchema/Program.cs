@@ -4,6 +4,7 @@ using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using OpenAI;
 using OpenAI.Managers;
+using OpenAI.ObjectModels;
 using OpenAI.ObjectModels.RequestModels;
 using Spectre.Console;
 using Spectre.Console.Json;
@@ -24,8 +25,6 @@ internal class Program
         var schemaAsString = schema.ToString();
         AnsiConsole.Write(new JsonText(schemaAsString));
 
-        return;
-
         // Send query to OpenAI
         var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var openAiDeveloperKey = config["OpenAiDeveloperKey"]!;
@@ -45,7 +44,11 @@ internal class Program
                 ChatMessage.FromSystem("You are a helpful assistant."),
                 ChatMessage.FromUser("Provide information about Poland"),
             },
-            // TODO - use Structured Outputs when it's available in the library (ticket: https://github.com/betalgo/openai/issues/617)
+            ResponseFormat = new ResponseFormat()
+            {
+                Type = StaticValues.CompletionStatics.ResponseFormat.JsonSchema,
+                JsonSchema = schema
+            }
         });
 
         if (completionResult.Successful)
