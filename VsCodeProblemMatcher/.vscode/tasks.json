@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // Pre-build task to detect issues with custom C# program, and emit warnings/errors if found
+    {
+      "label": "custom scan for quality issues",
+
+      "type": "shell",
+      "command": "dotnet run --project ./scripts/ScanForSeoIssues/ScanForSeoIssues.csproj",
+
+      // Problem matcher instructs VS Code how to capture the errors and warnings from the program output
+      "problemMatcher": [
+        {
+          // Unique id to help VS code clear warnings from the Problems window when you re-run the task
+          "owner": "custom-seo-warning",
+
+          // Format of the file path in error message might be auto-detected but being explicit is more reliable
+          "fileLocation": "absolute",
+
+          "pattern": {
+            // This regex needs to be adjusted to how your custom tool outputs errors and warnings to the console output
+            "regexp": "^(warning|error): file '([^']+)', line '(\\d+)', column '(\\d+)': (.+)$",
+
+            // The numbers below are 1-based indexes of the regex groups
+            "severity": 1,
+            "file": 2,
+            "line": 3,
+            "column": 4,
+            "message": 5
+          }
+        }
+      ],
+
+      "presentation": {
+        // Switch to the Problems view from the Terminal view in case of detected warnings or errors
+        "revealProblems": "onProblem",
+
+        // Clear the terminal output when the task is re-run for readability
+        "clear": true
+      }
+    },
+
+    // Example build task  (typically started with F6 key)
+    {
+      "label": "Build website",
+      "type": "shell",
+      "command": "echo 'Building the project... (this should never be displayed in this demo because of the detected custom errors)'",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+
+      // Key line: this task depends on the custom scan task above, and requires it to succeed before running
+      "dependsOn": ["custom scan for quality issues"]
+    }
+  ]
+}

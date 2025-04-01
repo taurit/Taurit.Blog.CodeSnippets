@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35913.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanForSeoIssues", "ScanForSeoIssues.csproj", "{EC73D76A-DF3A-4506-80B3-814D8C5065DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC73D76A-DF3A-4506-80B3-814D8C5065DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC73D76A-DF3A-4506-80B3-814D8C5065DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC73D76A-DF3A-4506-80B3-814D8C5065DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC73D76A-DF3A-4506-80B3-814D8C5065DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B4D8319-DA8C-4F95-9D9F-3D0A4B440281}
+	EndGlobalSection
+EndGlobal
